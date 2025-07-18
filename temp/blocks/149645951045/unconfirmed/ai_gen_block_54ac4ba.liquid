@@ -1,6 +1,677 @@
+{% doc %}
+  @prompt
+    Create a hero slideshow section for OGW Tech store with dark theme design. Include a full-width slide with bg-gray-900 background, centered content with large heading text in white/indigo colors, subtitle text, call-to-action button with indigo styling and hover effects, and space for a product image. Use Tailwind CSS classes for responsive design, proper spacing, and modern typography with Roboto font family. Make it suitable for showcasing tech gadgets and accessories.
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-hero-slideshow-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    min-height: 600px;
+    background-color: #111827;
+    overflow: hidden;
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  .ai-hero-slide-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #111827;}
+
+  .ai-hero-slide-{{ ai_gen_id }}.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .ai-hero-content-{{ ai_gen_id }} {
+    max-width: 1280px;
+    width: 100%;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .ai-hero-text-content-{{ ai_gen_id }} {
+    color: #ffffff;
+    z-index: 2;
+  }
+
+  .ai-hero-heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_size }}px;
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 0 0 1.5rem 0;
+    background: linear-gradient(135deg, #ffffff 0%, #6366f1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .ai-hero-subtitle-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subtitle_size }}px;
+    line-height: 1.6;
+    color: #d1d5db;
+    margin: 0 0 2rem 0;
+    font-weight: 400;
+  }
+
+  .ai-hero-button-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    background-color: {{ block.settings.button_color }};
+    color: {{ block.settings.button_text_color }};
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;}
+
+  .ai-hero-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_color }};
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+  }
+
+  .ai-hero-image-container-{{ ai_gen_id }} {
+    position: relative;
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;}
+
+  .ai-hero-image-{{ ai_gen_id }} {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 1rem;
+    filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.5));
+  }
+
+  .ai-hero-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #1f2937;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #374151;
+  }
+
+  .ai-hero-image-placeholder-{{ ai_gen_id }} svg {
+    width: 120px;
+    height: 120px;
+    color: #6b7280;
+  }
+
+  .ai-hero-navigation-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.75rem;
+    z-index: 3;
+  }
+
+  .ai-hero-nav-dot-{{ ai_gen_id }} {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;padding: 0;
+  }
+
+  .ai-hero-nav-dot-{{ ai_gen_id }}.active {
+    background-color: #6366f1;
+    transform: scale(1.2);
+  }
+
+  .ai-hero-nav-arrow-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #ffffff;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+  }
+
+  .ai-hero-nav-arrow-{{ ai_gen_id }}:hover {
+    background-color: rgba(99, 102, 241, 0.8);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .ai-hero-nav-arrow-{{ ai_gen_id }}.prev {
+    left: 2rem;
+  }
+
+  .ai-hero-nav-arrow-{{ ai_gen_id }}.next {
+    right: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .ai-hero-slideshow-{{ ai_gen_id }} {
+      height: 100vh;
+      min-height: 500px;
+    }
+
+    .ai-hero-content-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      text-align: center;padding: 0 1rem;
+    }
+
+    .ai-hero-heading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.heading_size }}px * 0.7);
+    }
+
+    .ai-hero-subtitle-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.subtitle_size }}px * 0.9);
+    }
+
+    .ai-hero-image-container-{{ ai_gen_id }} {
+      height: 300px;
+      order: -1;
+    }
+
+    .ai-hero-nav-arrow-{{ ai_gen_id }} {
+      display: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .ai-hero-content-{{ ai_gen_id }} {
+      padding: 0 0.75rem;
+    }
+
+    .ai-hero-button-{{ ai_gen_id }} {
+      padding: 0.875rem 1.5rem;
+      font-size: 0.9rem;
+    }
+  }
+{% endstyle %}
+
+<hero-slideshow-{{ ai_gen_id }}
+  class="ai-hero-slideshow-{{ ai_gen_id }}"
+  data-autoplay="{{ block.settings.autoplay }}"
+  data-autoplay-speed="{{ block.settings.autoplay_speed }}"
+  {{ block.shopify_attributes }}
+>
+  {% for i in (1..3) %}
+    {% liquid
+      assign slide_enabled_key = 'slide_' | append: i | append: '_enabled'
+      assign slide_image_key = 'slide_' | append: i | append: '_image'
+      assign slide_heading_key = 'slide_' | append: i | append: '_heading'
+      assign slide_subtitle_key = 'slide_' | append: i | append: '_subtitle'
+      assign slide_button_text_key = 'slide_' | append: i | append: '_button_text'
+      assign slide_button_link_key = 'slide_' | append: i | append: '_button_link'
+
+      assign slide_enabled = block.settings[slide_enabled_key]
+      assign slide_image = block.settings[slide_image_key]
+      assign slide_heading = block.settings[slide_heading_key]
+      assign slide_subtitle = block.settings[slide_subtitle_key]
+      assign slide_button_text = block.settings[slide_button_text_key]
+      assign slide_button_link = block.settings[slide_button_link_key]
+    %}
+
+    {% if slide_enabled %}
+      <div
+        class="ai-hero-slide-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}"
+        data-slide="{{ i }}">
+        <div class="ai-hero-content-{{ ai_gen_id }}">
+          <div class="ai-hero-text-content-{{ ai_gen_id }}">
+            {% if slide_heading != blank %}
+              <h1 class="ai-hero-heading-{{ ai_gen_id }}">{{ slide_heading }}</h1>
+            {% endif %}
+
+            {% if slide_subtitle != blank %}
+              <p class="ai-hero-subtitle-{{ ai_gen_id }}">{{ slide_subtitle }}</p>
+            {% endif %}
+
+            {% if slide_button_text != blank %}
+              <a
+                href="{{ slide_button_link | default: '#' }}"
+                class="ai-hero-button-{{ ai_gen_id }}"
+              >
+                {{ slide_button_text }}
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </a>
+            {% endif %}
+          </div>
+
+          <div class="ai-hero-image-container-{{ ai_gen_id }}">
+            {% if slide_image %}
+              <img
+                src="{{ slide_image | image_url: width: 800}}"
+                alt="{{ slide_image.alt | escape }}"
+                class="ai-hero-image-{{ ai_gen_id }}"loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                width="{{ slide_image.width }}"
+                height="{{ slide_image.height }}"
+              >
+            {% else %}
+              <div class="ai-hero-image-placeholder-{{ ai_gen_id }}">
+                {{ 'product-apparel-1' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  {% assign enabled_slides_count = 0 %}
+  {% for i in (1..3) %}
+    {% liquid
+      assign slide_enabled_key = 'slide_' | append: i | append: '_enabled'
+      assign slide_enabled = block.settings[slide_enabled_key]
+    %}
+    {% if slide_enabled %}
+      {% assign enabled_slides_count = enabled_slides_count | plus: 1 %}
+    {% endif %}
+  {% endfor %}
+
+  {% if enabled_slides_count > 1 %}
+    <div class="ai-hero-navigation-{{ ai_gen_id }}">
+      {% for i in (1..3) %}
+        {% liquid
+          assign slide_enabled_key = 'slide_' | append: i | append: '_enabled'
+          assign slide_enabled = block.settings[slide_enabled_key]
+        %}
+        {% if slide_enabled %}
+          <button
+            class="ai-hero-nav-dot-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}"
+            data-slide="{{ i }}"
+            aria-label="Go to slide {{ i }}"
+          ></button>
+        {% endif %}
+      {% endfor %}
+    </div><button
+      class="ai-hero-nav-arrow-{{ ai_gen_id }} prev"
+      aria-label="Previous slide"
+    >
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </button>
+
+    <button
+      class="ai-hero-nav-arrow-{{ ai_gen_id }} next"
+      aria-label="Next slide"
+    >
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M9 18l6-6-6-6"/>
+      </svg>
+    </button>
+  {% endif %}
+</hero-slideshow-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class HeroSlideshow{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentSlide = 1;
+        this.autoplayInterval = null;
+        this.isAutoplay = this.dataset.autoplay === 'true';
+        this.autoplaySpeed = parseInt(this.dataset.autoplaySpeed) * 1000;}
+
+      connectedCallback() {
+        this.slides = this.querySelectorAll('.ai-hero-slide-{{ ai_gen_id }}');
+        this.dots = this.querySelectorAll('.ai-hero-nav-dot-{{ ai_gen_id }}');
+        this.prevButton = this.querySelector('.ai-hero-nav-arrow-{{ ai_gen_id }}.prev');
+        this.nextButton = this.querySelector('.ai-hero-nav-arrow-{{ ai_gen_id }}.next');
+
+        this.setupEventListeners();
+        this.startAutoplay();
+      }
+
+      disconnectedCallback() {
+        this.stopAutoplay();
+      }
+
+      setupEventListeners() {
+        this.dots.forEach((dot) => {
+          dot.addEventListener('click', () => {
+            const slideNumber = parseInt(dot.dataset.slide);
+            this.goToSlide(slideNumber);
+          });
+        });
+
+        if (this.prevButton) {
+          this.prevButton.addEventListener('click', () => {
+            this.previousSlide();
+          });
+        }
+
+        if (this.nextButton) {
+          this.nextButton.addEventListener('click', () => {
+            this.nextSlide();
+          });
+        }
+
+        this.addEventListener('mouseenter', () => {
+          this.stopAutoplay();
+        });
+
+        this.addEventListener('mouseleave', () => {
+          this.startAutoplay();
+        });
+      }
+
+      goToSlide(slideNumber) {
+        this.slides.forEach((slide) => {
+          slide.classList.remove('active');
+        });
+
+        this.dots.forEach((dot) => {
+          dot.classList.remove('active');
+        });
+
+        const targetSlide = this.querySelector(`[data-slide="${slideNumber}"]`);
+        const targetDot = this.querySelector(`.ai-hero-nav-dot-{{ ai_gen_id }}[data-slide="${slideNumber}"]`);
+
+        if (targetSlide) {
+          targetSlide.classList.add('active');
+          this.currentSlide = slideNumber;
+        }
+
+        if (targetDot) {
+          targetDot.classList.add('active');
+        }
+      }
+
+      nextSlide() {
+        const enabledSlides = Array.from(this.slides).filter(slide => 
+          slide.style.display !== 'none'
+        );
+        const slideNumbers = enabledSlides.map(slide =>
+          parseInt(slide.dataset.slide)
+        ).sort((a, b) => a - b);
+
+        const currentIndex = slideNumbers.indexOf(this.currentSlide);
+        const nextIndex = (currentIndex + 1) % slideNumbers.length;
+        this.goToSlide(slideNumbers[nextIndex]);
+      }
+
+      previousSlide() {
+        const enabledSlides = Array.from(this.slides).filter(slide => 
+          slide.style.display !== 'none'
+        );
+        const slideNumbers = enabledSlides.map(slide => 
+          parseInt(slide.dataset.slide)
+        ).sort((a, b) => a - b);
+
+        const currentIndex = slideNumbers.indexOf(this.currentSlide);
+        const prevIndex = currentIndex === 0 ? slideNumbers.length - 1 : currentIndex - 1;
+        this.goToSlide(slideNumbers[prevIndex]);
+      }
+
+      startAutoplay() {
+        if (this.isAutoplay && this.slides.length > 1) {
+          this.autoplayInterval = setInterval(() => {
+            this.nextSlide();
+          }, this.autoplaySpeed);
+        }
+      }
+
+      stopAutoplay() {
+        if (this.autoplayInterval) {
+          clearInterval(this.autoplayInterval);
+          this.autoplayInterval = null;
+        }
+      }
+    }
+
+    customElements.define('hero-slideshow-{{ ai_gen_id }}', HeroSlideshow{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Hero Slideshow",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Slideshow Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Auto-play slides",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "label": "Auto-play speed",
+      "default": 5
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 32,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Subtitle size",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "Button Style"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button color",
+      "default": "#6366f1"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Button hover color",
+      "default": "#4f46e5"
+    },
+    {
+      "type": "header",
+      "content": "Slide 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_1_enabled",
+      "label": "Enable slide 1",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_1_image",
+      "label": "Slide 1 image"
+    },
+    {
+      "type": "text",
+      "id": "slide_1_heading",
+      "label": "Slide 1 heading",
+      "default": "Next-Gen Tech Gadgets"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_1_subtitle",
+      "label": "Slide 1 subtitle",
+      "default": "Discover cutting-edge technology that transforms your daily life. From smart devices to innovative accessories, find everything you need to stay ahead."
+    },
+    {
+      "type": "text",
+      "id": "slide_1_button_text",
+      "label": "Slide 1 button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "slide_1_button_link",
+      "label": "Slide 1 button link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_2_enabled",
+      "label": "Enable slide 2",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_2_image",
+      "label": "Slide 2 image"
+    },
+    {
+      "type": "text",
+      "id": "slide_2_heading",
+      "label": "Slide 2 heading",
+      "default": "Premium Accessories"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_2_subtitle",
+      "label": "Slide 2 subtitle",
+      "default": "Enhance your tech experience with our curated collection of premium accessories designed for performance and style."
+    },
+    {
+      "type": "text",
+      "id": "slide_2_button_text",
+      "label": "Slide 2 button text",
+      "default": "Explore Collection"
+    },
+    {
+      "type": "url",
+      "id": "slide_2_button_link",
+      "label": "Slide 2 button link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_3_enabled",
+      "label": "Enable slide 3",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_3_image",
+      "label": "Slide 3 image"
+    },
+    {
+      "type": "text",
+      "id": "slide_3_heading",
+      "label": "Slide 3 heading",
+      "default": "Innovation Meets Design"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_3_subtitle",
+      "label": "Slide 3 subtitle",
+      "default": "Experience the perfect fusion of innovative technology and sleek design. Quality products that deliver exceptional performance."
+    },
+    {
+      "type": "text",
+      "id": "slide_3_button_text",
+      "label": "Slide 3 button text",
+      "default": "Learn More"
+    },
+    {
+      "type": "url",
+      "id": "slide_3_button_link",
+      "label": "Slide 3 button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Slideshow"
+    }
+  ]
+}
 {% endschema %}
